@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
+module.exports.userSchema = new mongoose.Schema({
   name: {
     type: String, // строка
     required: true, // обязательное поле
@@ -19,5 +19,3 @@ const userSchema = new mongoose.Schema({
 
   },
 });
-
-module.exports = mongoose.mongo.model('user', userSchema);
