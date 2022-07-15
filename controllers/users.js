@@ -4,8 +4,8 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => {
-      res.status(200).send(user);
+    .then((data) => {
+      res.status(200).send(data);
     })
     .catch((error) => {
       res.status(500).send({ message: `Ошибка сервера ${error}` });
@@ -13,9 +13,22 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.getUsers = (req, res) => {
-  res.send(`<html>
-        <body>
-            <p>users works</p>
-        </body>
-        </html>`);
+  User.find({})
+    .then((data) => {
+      res.status(200).send(data);
+    })
+    .catch((error) => {
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
+    });
+};
+
+module.exports.getUsersId = (req, res) => {
+  const userId = req.params.id;
+  User.findById(userId)
+    .then((data) => {
+      res.status(200).send(data);
+    })
+    .catch((error) => {
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
+    });
 };

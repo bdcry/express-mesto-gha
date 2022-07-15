@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-module.exports.userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String, // строка
     required: true, // обязательное поле
@@ -16,6 +16,6 @@ module.exports.userSchema = new mongoose.Schema({
   avatar: {
     type: String, // строка
     required: true, // обязательное поле
-
   },
-});
+}, { versionKey: false });
+module.exports = mongoose.model('User', userSchema);
