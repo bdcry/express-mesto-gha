@@ -14,10 +14,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   console.log('Connected to MongoDB!');
 });
 
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
-});
-
 app.use((req, res, next) => {
   req.user = {
     _id: '62d1b0aca1ce5690a32086a0',
@@ -30,3 +26,7 @@ app.use(express.json());
 app.use('/', usersRouter);
 app.use('/', cardsRouter);
 app.all('*', errorRouter);
+
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`);
+});
