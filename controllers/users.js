@@ -41,7 +41,7 @@ module.exports.getUsersId = (req, res) => {
       res.status(200).send(data);
     })
     .catch((error) => {
-      if (error.name === 'GetUsersError') {
+      if (error.name === 'GetUsersIdError') {
         res.status(400).send({ message: `Неверно указан id пользователя:${userId}  ` });
         return;
       }
