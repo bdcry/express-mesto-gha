@@ -1,32 +1,37 @@
 const User = require('../models/user');
+const BadRequestError = require('../utils/errorcodes/bad-request-error');
+const NotFoundError = require('../utils/errorcodes/not-found-error');
+const InternalServerError = require('../utils/errorcodes/internal-server-error');
+
+const { CORRECT_CODE, CREATE_CODE } = require('../utils/correctcodes');
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
     .then((data) => {
-      res.status(200).send(data);
+      res.status(CREATE_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(400).send({ message: 'Данные не прошли валидацию на сервере' });
+        res.status(BadRequestError).send({ message: 'Данные не прошли валидацию на сервере' });
         return;
       }
-      res.status(500).send({ message: `Ошибка сервера ${error}` });
+      res.status(InternalServerError).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((data) => {
-      res.status(200).send(data);
+      res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
-      if (error.name === 'GetUsersError') {
-        res.status(404).send({ message: 'Пользователи  не существуют' });
+      if (error.name === 'CastError') {
+        res.status(NotFoundError).send({ message: 'Пользователи  не существуют' });
         return;
       }
-      res.status(500).send({ message: `Ошибка сервера ${error}` });
+      res.status(InternalServerError).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
@@ -35,17 +40,17 @@ module.exports.getUsersId = (req, res) => {
   User.findById(userId)
     .then((data) => {
       if (!data) {
-        res.status(404).send({ message: `Пользователь с указанным id:${userId} не существует` });
+        res.status(NotFoundError).send({ message: `Пользователь с указанным id:${userId} не существует` });
         return;
       }
-      res.status(200).send(data);
+      res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        res.status(400).send({ message: `Неверно указан id пользователя:${userId}  ` });
+        res.status(BadRequestError).send({ message: `Неверно указан id пользователя:${userId}  ` });
         return;
       }
-      res.status(500).send({ message: `Ошибка сервера ${error}` });
+      res.status(InternalServerError).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
@@ -54,14 +59,14 @@ module.exports.patchUserProfile = (req, res) => {
   const userId = req.user._id;
   User.findOneAndUpdate({ id: userId }, { name, about }, { new: true, runValidators: true })
     .then((data) => {
-      res.status(200).send(data);
+      res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(400).send({ message: 'Данные не прошли валидацию на сервере' });
+        res.status(BadRequestError).send({ message: 'Данные не прошли валидацию на сервере' });
         return;
       }
-      res.status(500).send({ message: `Ошибка сервера ${error}` });
+      res.status(InternalServerError).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
@@ -70,13 +75,13 @@ module.exports.patchUserAvatar = (req, res) => {
   const userId = req.user._id;
   User.findOneAndUpdate({ id: userId }, { avatar }, { new: true, runValidators: true })
     .then((data) => {
-      res.status(200).send(data);
+      res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(400).send({ message: 'Данные не прошли валидацию на сервере' });
+        res.status(BadRequestError).send({ message: 'Данные не прошли валидацию на сервере' });
         return;
       }
-      res.status(500).send({ message: `Ошибка сервера ${error}` });
+      res.status(InternalServerError).send({ message: `Ошибка сервера ${error}` });
     });
 };
