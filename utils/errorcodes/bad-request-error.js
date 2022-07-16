@@ -6,4 +6,4 @@
 //   }
 // };
 
-module.exports.BadRequestError = 400;
+// module.exports.BadRequestError = 400;

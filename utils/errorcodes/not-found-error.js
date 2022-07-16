@@ -6,4 +6,4 @@
 //   }
 // };
 
-module.exports.NotFoundError = 404;
+// module.exports.NotFoundError = 404;
