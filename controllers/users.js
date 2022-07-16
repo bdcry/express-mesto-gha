@@ -18,7 +18,7 @@ module.exports.createUser = (req, res) => {
         res.status(BadRequestError).send({ message: 'Данные не прошли валидацию на сервере' });
         return;
       }
-      res.status(InternalServerError).send({ message: `Ошибка сервера ${error}` });
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
@@ -32,7 +32,7 @@ module.exports.getUsers = (req, res) => {
         res.status(NotFoundError).send({ message: 'Пользователи  не существуют' });
         return;
       }
-      res.status(InternalServerError).send({ message: `Ошибка сервера ${error}` });
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
@@ -51,7 +51,7 @@ module.exports.getUsersId = (req, res) => {
         res.status(BadRequestError).send({ message: `Неверно указан id пользователя:${userId}  ` });
         return;
       }
-      res.status(InternalServerError).send({ message: `Ошибка сервера ${error}` });
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
@@ -67,7 +67,7 @@ module.exports.patchUserProfile = (req, res) => {
         res.status(BadRequestError).send({ message: 'Данные не прошли валидацию на сервере' });
         return;
       }
-      res.status(InternalServerError).send({ message: `Ошибка сервера ${error}` });
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
@@ -83,6 +83,6 @@ module.exports.patchUserAvatar = (req, res) => {
         res.status(BadRequestError).send({ message: 'Данные не прошли валидацию на сервере' });
         return;
       }
-      res.status(InternalServerError).send({ message: `Ошибка сервера ${error}` });
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
