@@ -22,8 +22,8 @@ module.exports.getUsers = (req, res) => {
       res.status(200).send(data);
     })
     .catch((error) => {
-      if (error.name === 'CastError') {
-        res.status(404).send({ message: 'Пользователи  не созданы' });
+      if (error.name === 'GetUsersError') {
+        res.status(404).send({ message: 'Пользователи  не существуют' });
         return;
       }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
@@ -34,10 +34,14 @@ module.exports.getUsersId = (req, res) => {
   const userId = req.params.id;
   User.findById(userId)
     .then((data) => {
+      if (!data) {
+        res.status(404).send({ message: `Пользователь с указанным id:${userId} не существует` });
+        return;
+      }
       res.status(200).send(data);
     })
     .catch((error) => {
-      if (error.name === 'CastError') {
+      if (error.name === 'GetUsersError') {
         res.status(400).send({ message: `Неверно указан id:${userId}  ` });
         return;
       }
@@ -48,7 +52,7 @@ module.exports.getUsersId = (req, res) => {
 module.exports.patchUserProfile = (req, res) => {
   const { name, about } = req.body;
   const userId = req.user._id;
-  User.findByIdAndUpdate(userId, { name, about })
+  User.findOneAndUpdate({ id: userId }, { name, about }, { new: true, runValidators: true })
     .then((data) => {
       res.status(200).send(data);
     })
@@ -64,7 +68,7 @@ module.exports.patchUserProfile = (req, res) => {
 module.exports.patchUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const userId = req.user._id;
-  User.findByIdAndUpdate(userId, { avatar })
+  User.findOneAndUpdate({ id: userId }, { avatar }, { new: true, runValidators: true })
     .then((data) => {
       res.status(200).send(data);
     })

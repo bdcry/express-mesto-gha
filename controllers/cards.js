@@ -32,12 +32,17 @@ module.exports.getCards = (req, res) => {
 module.exports.deleteCardsId = (req, res) => {
   const cardId = req.params.id;
   Card.findByIdAndRemove(cardId)
-    .then((card) => {
-      res.status(200).send(card);
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({ message: `Карточка с указанным id:${cardId} не существует` });
+        return;
+      }
+      res.status(200).send(data);
     })
     .catch((error) => {
-      if (error.name === 'CardIdError') {
-        res.status(404).send({ message: `Карточка с id:${cardId} не найдена` });
+      if (error.name === 'CastError') {
+        res.status(400).send({ message: `Карточка с id:${cardId} не существует` });
+        return;
       }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
@@ -47,11 +52,16 @@ module.exports.putLikesOnCards = (req, res) => {
   const cardId = req.params.id;
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((data) => {
+      if (!data) {
+        res.status(404).send({ message: `Карточка с указанным id:${cardId} не существует` });
+        return;
+      }
       res.status(200).send(data);
     })
     .catch((error) => {
-      if (error.name === 'CardNameError') {
+      if (error.name === 'CastError') {
         res.status(400).send({ message: 'Карточка не существует' });
+        return;
       }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
@@ -61,11 +71,16 @@ module.exports.deleteLikesFromCards = (req, res) => {
   const cardId = req.params.id;
   Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((data) => {
+      if (!data) {
+        res.status(404).send({ message: `Карточка с указанным id:${cardId} не существует` });
+        return;
+      }
       res.status(200).send(data);
     })
     .catch((error) => {
-      if (error.name === 'CardNameError') {
+      if (error.name === 'CastError') {
         res.status(400).send({ message: 'Карточка не существует' });
+        return;
       }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
