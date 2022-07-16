@@ -34,10 +34,6 @@ module.exports.getUsersId = (req, res) => {
   const userId = req.params.id;
   User.findById(userId)
     .then((data) => {
-      if (!data) {
-        res.status(404).send({ message: `Пользователь с указанным id:${userId} не существует` });
-        return;
-      }
       res.status(200).send(data);
     })
     .catch((error) => {
