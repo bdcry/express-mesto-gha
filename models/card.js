@@ -23,6 +23,6 @@ const cardSchema = new mongoose.Schema({
     type: Date, // дата
     default: Date.now(), // значение по умолчанию
   },
-});
+}, { versionKey: false });
 
 module.exports = mongoose.model('card', cardSchema);

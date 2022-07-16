@@ -32,3 +32,25 @@ module.exports.deleteCardsId = (req, res) => {
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
+
+module.exports.putLikesOnCards = (req, res) => {
+  const cardId = req.params.id;
+  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+    .then((data) => {
+      res.status(200).send(data);
+    })
+    .catch((error) => {
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
+    });
+};
+
+module.exports.deleteLikesFromCards = (req, res) => {
+  const cardId = req.params.id;
+  Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
+    .then((data) => {
+      res.status(200).send(data);
+    })
+    .catch((error) => {
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
+    });
+};
