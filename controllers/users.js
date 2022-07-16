@@ -1,6 +1,5 @@
 const User = require('../models/user');
 
-const InternalServerError = require('../utils/errorcodes/internal-server-error');
 const BadRequestError = require('../utils/errorcodes/bad-request-error');
 const NotFoundError = require('../utils/errorcodes/not-found-error');
 
