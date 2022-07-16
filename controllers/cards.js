@@ -14,10 +14,13 @@ module.exports.createCard = (req, res) => {
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((data) => {
-      res.status(200).send(data);
+    .then((cards) => {
+      res.status(200).send(cards);
     })
     .catch((error) => {
+      if (error.name === 'CardNameError') {
+        res.status(404).send({ message: 'Карточка не существует' });
+      }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
@@ -25,10 +28,13 @@ module.exports.getCards = (req, res) => {
 module.exports.deleteCardsId = (req, res) => {
   const cardId = req.params.id;
   Card.findByIdAndRemove(cardId)
-    .then((data) => {
-      res.status(200).send(data);
+    .then((card) => {
+      res.status(200).send(card);
     })
     .catch((error) => {
+      if (error.name === 'CardIdError') {
+        res.status(404).send({ message: `Карточка с id:${cardId} не найдена` });
+      }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
