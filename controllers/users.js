@@ -8,6 +8,10 @@ module.exports.createUser = (req, res) => {
       res.status(200).send(data);
     })
     .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: 'Данные не прошли валидацию на сервере' });
+        return;
+      }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
@@ -18,6 +22,10 @@ module.exports.getUsers = (req, res) => {
       res.status(200).send(data);
     })
     .catch((error) => {
+      if (error.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователи  не созданы' });
+        return;
+      }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
@@ -29,6 +37,10 @@ module.exports.getUsersId = (req, res) => {
       res.status(200).send(data);
     })
     .catch((error) => {
+      if (error.name === 'CastError') {
+        res.status(400).send({ message: `Неверно указан id:${userId}  ` });
+        return;
+      }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
@@ -41,6 +53,10 @@ module.exports.patchUserProfile = (req, res) => {
       res.status(200).send(data);
     })
     .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: 'Данные не прошли валидацию на сервере' });
+        return;
+      }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
@@ -53,6 +69,10 @@ module.exports.patchUserAvatar = (req, res) => {
       res.status(200).send(data);
     })
     .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: 'Данные не прошли валидацию на сервере' });
+        return;
+      }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };

@@ -8,6 +8,10 @@ module.exports.createCard = (req, res) => {
       res.status(200).send(data);
     })
     .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: 'Данные не прошли валидацию на сервере' });
+        return;
+      }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
@@ -46,6 +50,9 @@ module.exports.putLikesOnCards = (req, res) => {
       res.status(200).send(data);
     })
     .catch((error) => {
+      if (error.name === 'CardNameError') {
+        res.status(400).send({ message: 'Карточка не существует' });
+      }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
@@ -57,6 +64,9 @@ module.exports.deleteLikesFromCards = (req, res) => {
       res.status(200).send(data);
     })
     .catch((error) => {
+      if (error.name === 'CardNameError') {
+        res.status(400).send({ message: 'Карточка не существует' });
+      }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
