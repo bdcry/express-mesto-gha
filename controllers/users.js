@@ -34,11 +34,15 @@ module.exports.getUsersId = (req, res) => {
   const userId = req.params.id;
   User.findById(userId)
     .then((data) => {
+      if (!data) {
+        res.status(404).send({ message: `Пользователь с указанным id:${userId} не существует` });
+        return;
+      }
       res.status(200).send(data);
     })
     .catch((error) => {
-      if (error.name === 'GetUsersError') {
-        res.status(400).send({ message: `Неверно указан id:${userId}` });
+      if (error.name === 'CastError') {
+        res.status(400).send({ message: `Неверно указан id пользователя:${userId}  ` });
         return;
       }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
