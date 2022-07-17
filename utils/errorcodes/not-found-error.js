@@ -1,7 +1,7 @@
 module.exports = class NotFoundError extends Error {
   constructor(message) {
     super(message);
-    this.errorMessage = message;
+    this.message = 'Запрашиваемый объект не существует';
     this.statusCode = 404;
   }
 };

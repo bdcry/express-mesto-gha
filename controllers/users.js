@@ -15,9 +15,9 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        next(new BadRequestError('Данные не прошли валидацию на сервере'));
+        next(new BadRequestError());
       }
-      next(new InternalServerError('Ошибка сервера'));
+      next(new InternalServerError());
     });
 };
 
@@ -28,9 +28,9 @@ module.exports.getUsers = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new NotFoundError('Пользователи  не существуют'));
+        next(new NotFoundError());
       }
-      next(new InternalServerError('Ошибка сервера'));
+      next(new InternalServerError());
     });
 };
 
@@ -39,44 +39,52 @@ module.exports.getUsersId = (req, res, next) => {
   User.findById(userId)
     .then((data) => {
       if (!data) {
-        next(new NotFoundError(`Пользователь с указанным id:${userId} не существует`));
+        next(new NotFoundError());
       }
       res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new BadRequestError(`Неверно указан id пользователя:${userId}  `));
+        next(new BadRequestError());
       }
-      next(new InternalServerError('Ошибка сервера'));
+      next(new InternalServerError());
     });
 };
 
 module.exports.patchUserProfile = (req, res, next) => {
   const { name, about } = req.body;
   const userId = req.user._id;
-  User.findOneAndUpdate({ id: userId }, { name, about }, { new: true, runValidators: true })
+  User.findOneAndUpdate(
+    { id: userId },
+    { name, about },
+    { new: true, runValidators: true },
+  )
     .then((data) => {
       res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        next(new BadRequestError('Данные не прошли валидацию на сервере'));
+        next(new BadRequestError());
       }
-      next(new InternalServerError('Ошибка сервера'));
+      next(new InternalServerError());
     });
 };
 
 module.exports.patchUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const userId = req.user._id;
-  User.findOneAndUpdate({ id: userId }, { avatar }, { new: true, runValidators: true })
+  User.findOneAndUpdate(
+    { id: userId },
+    { avatar },
+    { new: true, runValidators: true },
+  )
     .then((data) => {
       res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        next(new BadRequestError('Данные не прошли валидацию на сервере'));
+        next(new BadRequestError());
       }
-      next(new InternalServerError('Ошибка сервера'));
+      next(new InternalServerError());
     });
 };
