@@ -1,7 +1,7 @@
-const User = require('../models/user');
-
 const NotFoundError = require('../utils/errorcodes/not-found-error');
 const BadRequestError = require('../utils/errorcodes/bad-request-error');
+
+const User = require('../models/user');
 
 const { CORRECT_CODE, CREATE_CODE } = require('../utils/correctcodes');
 
@@ -15,8 +15,9 @@ module.exports.createUser = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError());
+        return;
       }
-      next(error);
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
@@ -29,7 +30,7 @@ module.exports.getUsers = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new NotFoundError());
       }
-      next(error);
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
@@ -46,18 +47,14 @@ module.exports.getUsersId = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new BadRequestError());
       }
-      next(error);
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
 module.exports.patchUserProfile = (req, res, next) => {
   const { name, about } = req.body;
   const userId = req.user._id;
-  User.findOneAndUpdate(
-    { id: userId },
-    { name, about },
-    { new: true, runValidators: true },
-  )
+  User.findOneAndUpdate({ id: userId }, { name, about }, { new: true, runValidators: true })
     .then((data) => {
       res.status(CORRECT_CODE).send(data);
     })
@@ -65,18 +62,14 @@ module.exports.patchUserProfile = (req, res, next) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError());
       }
-      next(error);
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
 module.exports.patchUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const userId = req.user._id;
-  User.findOneAndUpdate(
-    { id: userId },
-    { avatar },
-    { new: true, runValidators: true },
-  )
+  User.findOneAndUpdate({ id: userId }, { avatar }, { new: true, runValidators: true })
     .then((data) => {
       res.status(CORRECT_CODE).send(data);
     })
@@ -84,6 +77,6 @@ module.exports.patchUserAvatar = (req, res, next) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError());
       }
-      next(error);
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };

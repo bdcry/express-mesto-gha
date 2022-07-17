@@ -1,7 +1,7 @@
-const Card = require('../models/card');
-
 const NotFoundError = require('../utils/errorcodes/not-found-error');
 const BadRequestError = require('../utils/errorcodes/bad-request-error');
+
+const Card = require('../models/card');
 
 const { CORRECT_CODE, CREATE_CODE } = require('../utils/correctcodes');
 
@@ -16,7 +16,7 @@ module.exports.createCard = (req, res, next) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError());
       }
-      next(error);
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
@@ -29,7 +29,7 @@ module.exports.getCards = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new NotFoundError());
       }
-      next(error);
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
@@ -44,19 +44,15 @@ module.exports.deleteCardsId = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new NotFoundError());
+        next(new BadRequestError());
       }
-      next(error);
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
 module.exports.putLikesOnCards = (req, res, next) => {
   const cardId = req.params.id;
-  Card.findByIdAndUpdate(
-    cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true },
-  )
+  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((data) => {
       if (!data) {
         next(new NotFoundError());
@@ -67,17 +63,13 @@ module.exports.putLikesOnCards = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new BadRequestError());
       }
-      next(error);
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
 module.exports.deleteLikesFromCards = (req, res, next) => {
   const cardId = req.params.id;
-  Card.findByIdAndUpdate(
-    cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true },
-  )
+  Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((data) => {
       if (!data) {
         next(new NotFoundError());
@@ -88,6 +80,6 @@ module.exports.deleteLikesFromCards = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new BadRequestError());
       }
-      next(error);
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
