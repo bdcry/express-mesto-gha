@@ -1,11 +1,8 @@
-const NotFoundError = require('../utils/errorcodes/not-found-error');
-const BadRequestError = require('../utils/errorcodes/bad-request-error');
-
 const User = require('../models/user');
 
 const { CORRECT_CODE, CREATE_CODE } = require('../utils/correctcodes');
 
-module.exports.createUser = (req, res, next) => {
+module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
@@ -14,44 +11,47 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        next(new BadRequestError());
+        res.status(400).send({ message: 'Данные не прошли валидацию на сервере' });
         return;
       }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
-module.exports.getUsers = (req, res, next) => {
+module.exports.getUsers = (req, res) => {
   User.find({})
     .then((data) => {
       res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new NotFoundError());
+        res.status(404).send({ message: 'Пользователи  не существуют' });
+        return;
       }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
-module.exports.getUsersId = (req, res, next) => {
+module.exports.getUsersId = (req, res) => {
   const userId = req.params.id;
   User.findById(userId)
     .then((data) => {
       if (!data) {
-        next(new NotFoundError());
+        res.status(404).send({ message: `Пользователь с указанным id:${userId} не существует` });
+        return;
       }
       res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new BadRequestError());
+        res.status(400).send({ message: `Неверно указан id пользователя:${userId}  ` });
+        return;
       }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
-module.exports.patchUserProfile = (req, res, next) => {
+module.exports.patchUserProfile = (req, res) => {
   const { name, about } = req.body;
   const userId = req.user._id;
   User.findOneAndUpdate({ id: userId }, { name, about }, { new: true, runValidators: true })
@@ -60,13 +60,14 @@ module.exports.patchUserProfile = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        next(new BadRequestError());
+        res.status(400).send({ message: 'Данные не прошли валидацию на сервере' });
+        return;
       }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
 };
 
-module.exports.patchUserAvatar = (req, res, next) => {
+module.exports.patchUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const userId = req.user._id;
   User.findOneAndUpdate({ id: userId }, { avatar }, { new: true, runValidators: true })
@@ -75,7 +76,8 @@ module.exports.patchUserAvatar = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        next(new BadRequestError());
+        res.status(400).send({ message: 'Данные не прошли валидацию на сервере' });
+        return;
       }
       res.status(500).send({ message: `Ошибка сервера ${error}` });
     });
