@@ -1,7 +1,6 @@
 const Card = require('../models/card');
 
 const NotFoundError = require('../utils/errorcodes/not-found-error');
-const InternalServerError = require('../utils/errorcodes/internal-server-error');
 const BadRequestError = require('../utils/errorcodes/bad-request-error');
 
 const { CORRECT_CODE, CREATE_CODE } = require('../utils/correctcodes');
@@ -17,7 +16,7 @@ module.exports.createCard = (req, res, next) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError());
       }
-      next(new InternalServerError());
+      next(error);
     });
 };
 
@@ -30,7 +29,7 @@ module.exports.getCards = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new NotFoundError());
       }
-      next(new InternalServerError());
+      next(error);
     });
 };
 
@@ -47,7 +46,7 @@ module.exports.deleteCardsId = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new NotFoundError());
       }
-      next(new InternalServerError());
+      next(error);
     });
 };
 
@@ -68,7 +67,7 @@ module.exports.putLikesOnCards = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new BadRequestError());
       }
-      next(new InternalServerError());
+      next(error);
     });
 };
 
@@ -81,9 +80,7 @@ module.exports.deleteLikesFromCards = (req, res, next) => {
   )
     .then((data) => {
       if (!data) {
-        next(
-          new NotFoundError(`Карточка с указанным id:${cardId} не существует`),
-        );
+        next(new NotFoundError());
       }
       res.status(CORRECT_CODE).send(data);
     })
@@ -91,6 +88,6 @@ module.exports.deleteLikesFromCards = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new BadRequestError());
       }
-      next(new InternalServerError());
+      next(error);
     });
 };

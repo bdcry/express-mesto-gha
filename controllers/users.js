@@ -1,7 +1,6 @@
 const User = require('../models/user');
 
 const NotFoundError = require('../utils/errorcodes/not-found-error');
-const InternalServerError = require('../utils/errorcodes/internal-server-error');
 const BadRequestError = require('../utils/errorcodes/bad-request-error');
 
 const { CORRECT_CODE, CREATE_CODE } = require('../utils/correctcodes');
@@ -17,7 +16,7 @@ module.exports.createUser = (req, res, next) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError());
       }
-      next(new InternalServerError());
+      next(error);
     });
 };
 
@@ -30,7 +29,7 @@ module.exports.getUsers = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new NotFoundError());
       }
-      next(new InternalServerError());
+      next(error);
     });
 };
 
@@ -47,7 +46,7 @@ module.exports.getUsersId = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new BadRequestError());
       }
-      next(new InternalServerError());
+      next(error);
     });
 };
 
@@ -66,7 +65,7 @@ module.exports.patchUserProfile = (req, res, next) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError());
       }
-      next(new InternalServerError());
+      next(error);
     });
 };
 
@@ -85,6 +84,6 @@ module.exports.patchUserAvatar = (req, res, next) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError());
       }
-      next(new InternalServerError());
+      next(error);
     });
 };
