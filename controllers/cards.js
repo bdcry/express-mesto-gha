@@ -17,7 +17,7 @@ module.exports.createCard = (req, res, next) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError('Данные не прошли валидацию на сервере'));
       }
-      next(new InternalServerError({ message: `Ошибка сервера ${error}` }));
+      next(new InternalServerError(`Ошибка сервера ${error}`));
     });
 };
 
@@ -30,7 +30,7 @@ module.exports.getCards = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new NotFoundError('Карточка не существует'));
       }
-      next(new InternalServerError({ message: `Ошибка сервера ${error}` }));
+      next(new InternalServerError(`Ошибка сервера ${error}`));
     });
 };
 
@@ -39,15 +39,15 @@ module.exports.deleteCardsId = (req, res, next) => {
   Card.findByIdAndRemove(cardId)
     .then((data) => {
       if (!data) {
-        next(new NotFoundError({ message: `Карточка с указанным id:${cardId} не существует` }));
+        next(new NotFoundError(`Карточка с указанным id:${cardId} не существует`));
       }
       res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new NotFoundError({ message: `Карточка с указанным id:${cardId} не существует` }));
+        next(new NotFoundError(`Карточка с указанным id:${cardId} не существует`));
       }
-      next(new InternalServerError({ message: `Ошибка сервера ${error}` }));
+      next(new InternalServerError(`Ошибка сервера ${error}`));
     });
 };
 
@@ -56,7 +56,7 @@ module.exports.putLikesOnCards = (req, res, next) => {
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((data) => {
       if (!data) {
-        next(new NotFoundError({ message: `Карточка с указанным id:${cardId} не существует` }));
+        next(new NotFoundError(`Карточка с указанным id:${cardId} не существует`));
       }
       res.status(CORRECT_CODE).send(data);
     })
@@ -64,7 +64,7 @@ module.exports.putLikesOnCards = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new BadRequestError('Карточка не существует'));
       }
-      next(new InternalServerError({ message: `Ошибка сервера ${error}` }));
+      next(new InternalServerError(`Ошибка сервера ${error}`));
     });
 };
 
@@ -73,7 +73,7 @@ module.exports.deleteLikesFromCards = (req, res, next) => {
   Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((data) => {
       if (!data) {
-        next(new NotFoundError({ message: `Карточка с указанным id:${cardId} не существует` }));
+        next(new NotFoundError(`Карточка с указанным id:${cardId} не существует`));
       }
       res.status(CORRECT_CODE).send(data);
     })
@@ -81,6 +81,6 @@ module.exports.deleteLikesFromCards = (req, res, next) => {
       if (error.name === 'CastError') {
         next(new BadRequestError('Карточка не существует'));
       }
-      next(new InternalServerError({ message: `Ошибка сервера ${error}` }));
+      next(new InternalServerError(`Ошибка сервера ${error}`));
     });
 };
