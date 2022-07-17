@@ -1,8 +1,12 @@
 const Card = require('../models/card');
 
+const NotFoundError = require('../utils/errorcodes/not-found-error');
+const InternalServerError = require('../utils/errorcodes/internal-server-error');
+const BadRequestError = require('../utils/errorcodes/bad-request-error');
+
 const { CORRECT_CODE, CREATE_CODE } = require('../utils/correctcodes');
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
@@ -11,79 +15,72 @@ module.exports.createCard = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(400).send({ message: 'Данные не прошли валидацию на сервере' });
-        return;
+        next(new BadRequestError('Данные не прошли валидацию на сервере'));
       }
-      res.status(500).send({ message: `Ошибка сервера ${error}` });
+      next(new InternalServerError({ message: `Ошибка сервера ${error}` }));
     });
 };
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
       res.status(CORRECT_CODE).send(cards);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        res.status(404).send({ message: 'Карточка не существует' });
+        next(new NotFoundError('Карточка не существует'));
       }
-      res.status(500).send({ message: `Ошибка сервера ${error}` });
+      next(new InternalServerError({ message: `Ошибка сервера ${error}` }));
     });
 };
 
-module.exports.deleteCardsId = (req, res) => {
+module.exports.deleteCardsId = (req, res, next) => {
   const cardId = req.params.id;
   Card.findByIdAndRemove(cardId)
     .then((data) => {
       if (!data) {
-        res.status(404).send({ message: `Карточка с указанным id:${cardId} не существует` });
-        return;
+        next(new NotFoundError({ message: `Карточка с указанным id:${cardId} не существует` }));
       }
       res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        res.status(400).send({ message: `Карточка с id:${cardId} не существует` });
-        return;
+        next(new NotFoundError({ message: `Карточка с указанным id:${cardId} не существует` }));
       }
-      res.status(500).send({ message: `Ошибка сервера ${error}` });
+      next(new InternalServerError({ message: `Ошибка сервера ${error}` }));
     });
 };
 
-module.exports.putLikesOnCards = (req, res) => {
+module.exports.putLikesOnCards = (req, res, next) => {
   const cardId = req.params.id;
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((data) => {
       if (!data) {
-        res.status(404).send({ message: `Карточка с указанным id:${cardId} не существует` });
-        return;
+        next(new NotFoundError({ message: `Карточка с указанным id:${cardId} не существует` }));
       }
       res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка не существует' });
-        return;
+        next(new BadRequestError('Карточка не существует'));
       }
-      res.status(500).send({ message: `Ошибка сервера ${error}` });
+      next(new InternalServerError({ message: `Ошибка сервера ${error}` }));
     });
 };
 
-module.exports.deleteLikesFromCards = (req, res) => {
+module.exports.deleteLikesFromCards = (req, res, next) => {
   const cardId = req.params.id;
   Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((data) => {
       if (!data) {
-        res.status(404).send({ message: `Карточка с указанным id:${cardId} не существует` });
-        return;
+        next(new NotFoundError({ message: `Карточка с указанным id:${cardId} не существует` }));
       }
       res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка не существует' });
-        return;
+        next(new BadRequestError('Карточка не существует'));
       }
-      res.status(500).send({ message: `Ошибка сервера ${error}` });
+      next(new InternalServerError({ message: `Ошибка сервера ${error}` }));
     });
 };
