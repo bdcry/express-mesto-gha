@@ -5,9 +5,9 @@ const {
 } = require('../utils/codes');
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const { name, about, avatar, email, password } = req.body;
 
-  User.create({ name, about, avatar })
+  User.create({ name, about, avatar, email, password })
     .then((data) => {
       res.status(CREATE_CODE).send(data);
     })

@@ -17,5 +17,15 @@ const userSchema = new mongoose.Schema({
     type: String, // строка
     required: [true, 'Это обязательное поле'], // обязательное поле
   },
+  email: {
+    type: String, // строка
+    required: [true, 'Это обязательное поле'], // обязательное поле
+
+  },
+  password: {
+    type: String, // строка
+    rrequired: [true, 'Это обязательное поле'], // обязательное поле
+    select: false, // исключаем возврат хеш пароля из базы
+  },
 }, { versionKey: false });
 module.exports = mongoose.model('User', userSchema);
