@@ -1,17 +1,19 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const {
-  CORRECT_CODE, CREATE_CODE, NOTFOUNDERROR, INTERNALSERVERERROR, BADREQUEST,
+  CORRECT_CODE, CREATE_CODE, NOTFOUNDERROR, INTERNALSERVERERROR, BADREQUEST, UNATHORIZEDERROR,
 } = require('../utils/codes');
 
 module.exports.createUser = (req, res) => {
   const {
-    name, about, avatar, email, password,
+    email, name, about, avatar,
   } = req.body;
-
-  User.create({
-    name, about, avatar, email, password,
-  })
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => User.create({
+      email, password: hash, name, about, avatar,
+    }))
     .then((data) => {
       res.status(CREATE_CODE).send(data);
     })
@@ -83,6 +85,24 @@ module.exports.patchUserAvatar = (req, res) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         res.status(BADREQUEST).send({ message: 'Данные не прошли валидацию на сервере' });
+        return;
+      }
+      res.status(INTERNALSERVERERROR).send({ message: `Ошибка сервера ${error}` });
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      // аутентификация успешна! пользователь в переменной user
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.status(CORRECT_CODE).send({ token });
+    })
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(UNATHORIZEDERROR).send({ message: 'Ошибка аутентификации' });
         return;
       }
       res.status(INTERNALSERVERERROR).send({ message: `Ошибка сервера ${error}` });

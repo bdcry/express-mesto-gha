@@ -4,3 +4,4 @@ module.exports.CREATE_CODE = 201;
 module.exports.NOTFOUNDERROR = 404;
 module.exports.INTERNALSERVERERROR = 500;
 module.exports.BADREQUEST = 400;
+module.exports.UNATHORIZEDERROR = 401;
