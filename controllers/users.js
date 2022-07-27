@@ -59,7 +59,7 @@ module.exports.getUsersId = (req, res) => {
     });
 };
 
-module.export.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res) => {
   const userId = req.user._id;
   return User.findById(userId)
     .then((user) => {
