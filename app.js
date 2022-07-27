@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const errorRouter = require('./routes/errors');
+const { createUser, login } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -23,9 +25,14 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-app.use('/', usersRouter);
-app.use('/', cardsRouter);
-app.all('*', errorRouter);
+
+app.post('/signin', login);
+app.post('/signup', createUser);
+
+app.use(auth);
+app.use('/', auth, usersRouter);
+app.use('/', auth, cardsRouter);
+app.all('*', auth, errorRouter);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

@@ -59,6 +59,21 @@ module.exports.getUsersId = (req, res) => {
     });
 };
 
+module.export.getCurrentUser = (req, res) => {
+  const userId = req.user._id;
+  return User.findById(userId)
+    .then((user) => {
+      res.status(CORRECT_CODE).send(user);
+    })
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(UNATHORIZEDERROR).send({ message: 'Ошибка аутентификации' });
+        return;
+      }
+      res.status(INTERNALSERVERERROR).send({ message: `Ошибка сервера ${error}` });
+    });
+};
+
 module.exports.patchUserProfile = (req, res) => {
   const { name, about } = req.body;
   const userId = req.user._id;
