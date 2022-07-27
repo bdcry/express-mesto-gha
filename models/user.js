@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const validator = require('validator');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -25,13 +26,13 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String, // строка
-    rrequired: [true, 'Это обязательное поле'], // обязательное поле
+    required: [true, 'Это обязательное поле'], // обязательное поле
     select: false, // исключаем возврат хеш пароля из базы
   },
 }, { versionKey: false });
 
 userSchema.statics.findUserByCredentials = function (email, password) {
-  return this.findOne({ email })
+  return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         return Promise.reject(new Error('Неправильные почта или пароль'));
