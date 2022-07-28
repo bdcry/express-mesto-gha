@@ -2,24 +2,32 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 
+// {
+//   "email": "bdcry@bdcry.ru",
+//   "password": "qwerty123456"
+// }
+
+// {
+//   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MmU
+//  yODljYjE5NjNkZTc3MjJhMDk1ZTEiLCJpYXQiOjE2NTkwMTM1OTMsImV4cCI6MT
+// Y1OTYxODM5M30.Bi46IUdmcwhXZqgdkPZDjR1BAs0TKJc8W_UHWoh092U"
+// }
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String, // строка
-    required: true, // обязательное поле
     minlength: [2, 'Должно быть от 2 до 30 символов'], // минимальная длина имени — 2 символа
     maxlength: [30, 'Должно быть от 2 до 30 символов'], // а максимальная — 30 символов
     default: 'Жак-Ив Кусто', // значение по умолчанию
   },
   about: {
     type: String, // строка
-    required: [true, 'Это обязательное поле'], // обязательное поле
     minlength: [2, 'Должно быть от 2 до 30 символов'], // минимальная длина имени — 2 символа
     maxlength: [30, 'Должно быть от 2 до 30 символов'], // а максимальная — 30 символов
     default: 'Исследователь', // значение по умолчанию
   },
   avatar: {
     type: String, // строка
-    required: [true, 'Это обязательное поле'], // обязательное поле
     default: 'https://images.unsplash.com/photo-1563823263008-ec7877629ba0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80', // значение по умолчанию
   },
   email: {
@@ -40,7 +48,7 @@ const userSchema = new mongoose.Schema({
   },
 }, { versionKey: false });
 
-userSchema.statics.findUserByCredentials = function (email, password) {
+userSchema.statics.findUserByCredentials = function func(email, password) {
   return this.findOne({ email }).select('+password') // скрываем пароль
     .then((user) => {
       if (!user) {
