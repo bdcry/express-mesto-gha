@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String, // строка
       default:
-        'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.pnghttps://images.unsplash.com/photo-1563823263008-ec7877629ba0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80', // значение по умолчанию
+        'https://pictures.s3.yandex.net/https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png/jacques-cousteau_1604399756.pnghttps://images.unsplash.com/photo-1563823263008-ec7877629ba0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80', // значение по умолчанию
       validate: {
         validator(v) {
           return /^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/.test(
