@@ -18,12 +18,18 @@ module.exports.createUser = (req, res, next) => {
       email, password: hash, name, about, avatar,
     }))
     .then((data) => {
-      res.status(CREATE_CODE).send(data);
+      res.status(CREATE_CODE).send({
+        name: data.name,
+        about: data.about,
+        avatar: data.avatar,
+        _id: data._id,
+        email: data.email,
+      });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
         throw new BadRequest('Данные не прошли валидацию на сервере');
-      } else if (error.code === 11000 ) {
+      } else if (error.code === 11000) {
         throw new DuplicateConflictError('Указанный email давно отдыхает в базе данных, используйте другой email :)');
       }
       next(error);
