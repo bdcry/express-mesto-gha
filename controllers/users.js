@@ -2,11 +2,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const {
-  CORRECT_CODE, CREATE_CODE, NOTFOUNDERROR, INTERNALSERVERERROR, BADREQUEST, UNATHORIZEDERROR,
-} = require('../utils/codes');
+const AuthorizationError = require('../utils/errors/AuthorizationError');
+const BadRequest = require('../utils/errors/BadRequest');
+const NotFound = require('../utils/errors/NotFound');
 
-module.exports.createUser = (req, res) => {
+const { CORRECT_CODE, CREATE_CODE } = require('../utils/codes');
+
+module.exports.createUser = (req, res, next) => {
   const {
     email, name, about, avatar,
   } = req.body;
@@ -19,47 +21,46 @@ module.exports.createUser = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(BADREQUEST).send({ message: 'Данные не прошли валидацию на сервере' });
-        return;
+        throw new BadRequest('Данные не прошли валидацию на сервере');
       }
-      res.status(INTERNALSERVERERROR).send({ message: `Ошибка сервера ${error}` });
-    });
+      next(error);
+    })
+    .catch(next);
 };
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((data) => {
       res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        res.status(NOTFOUNDERROR).send({ message: 'Пользователи  не существуют' });
-        return;
+        throw new NotFound('Пользователи не существуют');
       }
-      res.status(INTERNALSERVERERROR).send({ message: `Ошибка сервера ${error}` });
-    });
+      next(error);
+    })
+    .catch(next);
 };
 
-module.exports.getUsersId = (req, res) => {
+module.exports.getUsersId = (req, res, next) => {
   const userId = req.params.id;
   User.findById(userId)
     .then((data) => {
       if (!data) {
-        res.status(NOTFOUNDERROR).send({ message: `Пользователь с указанным id:${userId} не существует` });
-        return;
+        throw new NotFound('Нет пользователя с таким id');
       }
       res.status(CORRECT_CODE).send(data);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        res.status(BADREQUEST).send({ message: `Неверно указан id пользователя:${userId}  ` });
-        return;
+        throw new BadRequest('Неверно указан id пользователя');
       }
-      res.status(INTERNALSERVERERROR).send({ message: `Ошибка сервера ${error}` });
-    });
+      next(error);
+    })
+    .catch(next);
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   return User.findById(userId)
     .then((user) => {
@@ -67,14 +68,14 @@ module.exports.getCurrentUser = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(UNATHORIZEDERROR).send({ message: 'Ошибка аутентификации' });
-        return;
+        throw new AuthorizationError('Ошибка аутентификации');
       }
-      res.status(INTERNALSERVERERROR).send({ message: `Ошибка сервера ${error}` });
-    });
+      next(error);
+    })
+    .catch(next);
 };
 
-module.exports.patchUserProfile = (req, res) => {
+module.exports.patchUserProfile = (req, res, next) => {
   const { name, about } = req.body;
   const userId = req.user._id;
   User.findOneAndUpdate({ id: userId }, { name, about }, { new: true, runValidators: true })
@@ -83,14 +84,14 @@ module.exports.patchUserProfile = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(BADREQUEST).send({ message: 'Данные не прошли валидацию на сервере' });
-        return;
+        throw new BadRequest('Данные не прошли валидацию на сервере');
       }
-      res.status(INTERNALSERVERERROR).send({ message: `Ошибка сервера ${error}` });
-    });
+      next(error);
+    })
+    .catch(next);
 };
 
-module.exports.patchUserAvatar = (req, res) => {
+module.exports.patchUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const userId = req.user._id;
   User.findOneAndUpdate({ id: userId }, { avatar }, { new: true, runValidators: true })
@@ -99,14 +100,14 @@ module.exports.patchUserAvatar = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(BADREQUEST).send({ message: 'Данные не прошли валидацию на сервере' });
-        return;
+        throw new BadRequest('Данные не прошли валидацию на сервере');
       }
-      res.status(INTERNALSERVERERROR).send({ message: `Ошибка сервера ${error}` });
-    });
+      next(error);
+    })
+    .catch(next);
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -117,9 +118,9 @@ module.exports.login = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(UNATHORIZEDERROR).send({ message: 'Ошибка аутентификации' });
-        return;
+        throw new AuthorizationError('Ошибка аутентификации');
       }
-      res.status(INTERNALSERVERERROR).send({ message: `Ошибка сервера ${error}` });
-    });
+      next(error);
+    })
+    .catch(next);
 };
