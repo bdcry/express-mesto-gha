@@ -4,14 +4,15 @@ const validator = require('validator');
 const AuthorizationError = require('../utils/errors/AuthorizationError');
 
 // {
-//   "email": "bdcry@bdcry.ru",
-//   "password": "qwerty123456"
+//   "email" : "bdcry@yandex.ru",
+//   "password" : "bdcryqwerty",
+//   "avatar": "https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png"
 // }
 
 // {
-//   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MmU
-//  yODljYjE5NjNkZTc3MjJhMDk1ZTEiLCJpYXQiOjE2NTkwMTM1OTMsImV4cCI6MT
-// Y1OTYxODM5M30.Bi46IUdmcwhXZqgdkPZDjR1BAs0TKJc8W_UHWoh092U"
+//   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+//   eyJfaWQiOiI2MmU0MzdkMGYxMGZiNjlmY2ViMjUyZDgiLCJpYXQiOjE2NTkxMjM2ODcsImV4cCI6MTY1OTcyODQ4N30.
+//   Tk2czfl4M48xzAnDf2xRxmMBdW-Z9IFYnspcsP22mIk"
 // }
 
 const userSchema = new mongoose.Schema(

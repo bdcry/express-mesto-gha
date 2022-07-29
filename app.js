@@ -43,7 +43,6 @@ app.post(
   createUser,
 );
 
-app.use(auth);
 app.use('/', auth, usersRouter);
 app.use('/', auth, cardsRouter);
 app.all('*', auth, errorRouter);
