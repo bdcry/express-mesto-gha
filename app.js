@@ -26,6 +26,12 @@ app.use('/', auth, usersRouter);
 app.use('/', auth, cardsRouter);
 app.all('*', auth, errorRouter);
 
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла техническая чоколадка' : message });
+  next();
+});
+
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
