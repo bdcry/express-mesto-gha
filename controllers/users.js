@@ -7,7 +7,7 @@ const BadRequest = require('../utils/errors/BadRequest');
 const NotFound = require('../utils/errors/NotFound');
 const DuplicateConflictError = require('../utils/errors/DuplicateConflictError');
 
-const { CORRECT_CODE, CREATE_CODE } = require('../utils/codes');
+const { CORRECT_CODE, CREATE_CODE } = require('../utils/goodcodes');
 
 module.exports.createUser = (req, res, next) => {
   const {

@@ -4,7 +4,7 @@ const BadRequest = require('../utils/errors/BadRequest');
 const NotFound = require('../utils/errors/NotFound');
 const ForbiddenError = require('../utils/errors/ForbiddenError');
 
-const { CORRECT_CODE, CREATE_CODE } = require('../utils/codes');
+const { CORRECT_CODE, CREATE_CODE } = require('../utils/goodcodes');
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -50,6 +50,12 @@ module.exports.deleteCardsId = (req, res, next) => {
         Card.findByIdAndRemove(cardId)
           .then((data) => {
             res.status(CORRECT_CODE).send(data);
+          })
+          .catch((error) => {
+            if (error.name === 'CastError') {
+              throw new BadRequest(`Карточка с id:${cardId} не найдена`);
+            }
+            next(error);
           })
           .catch(next);
       }
