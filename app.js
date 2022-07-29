@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const errorRouter = require('./routes/errors');
@@ -26,6 +27,7 @@ app.use('/', auth, usersRouter);
 app.use('/', auth, cardsRouter);
 app.all('*', auth, errorRouter);
 
+app.use(errors()); // обработчик ошибок celebrate
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла техническая чоколадка' : message });

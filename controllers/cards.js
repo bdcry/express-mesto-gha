@@ -42,7 +42,7 @@ module.exports.deleteCardsId = (req, res, next) => {
   Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw new BadRequest(`Карточка с указанным id: ${cardId} не существует`);
+        throw new NotFound(`Карточка с указанным id: ${cardId} не существует`);
       }
       if (card.owner.toString() !== id) {
         throw new ForbiddenError('Недостаточно прав для удаления карточки');
