@@ -12,7 +12,24 @@ usersRouter.get('/users/:id', celebrate({
   }),
 }), getUsersId);
 
-usersRouter.patch('/users/me', patchUserProfile);
-usersRouter.patch('/users/me/avatar', patchUserAvatar);
+usersRouter.patch(
+  '/users/me',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().required().min(2).max(30),
+      about: Joi.string().required().min(2).max(30),
+    }),
+  }),
+  patchUserProfile,
+);
+usersRouter.patch(
+  '/users/me/avatar',
+  celebrate({
+    body: Joi.object().keys({
+      avatar: Joi.string().regex(/^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/),
+    }),
+  }),
+  patchUserAvatar,
+);
 
 module.exports = usersRouter;
