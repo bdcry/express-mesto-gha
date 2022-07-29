@@ -5,6 +5,7 @@ const User = require('../models/user');
 const AuthorizationError = require('../utils/errors/AuthorizationError');
 const BadRequest = require('../utils/errors/BadRequest');
 const NotFound = require('../utils/errors/NotFound');
+const DuplicateConflictError = require('../utils/errors/DuplicateConflictError');
 
 const { CORRECT_CODE, CREATE_CODE } = require('../utils/codes');
 
@@ -22,6 +23,8 @@ module.exports.createUser = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         throw new BadRequest('Данные не прошли валидацию на сервере');
+      } else if (error.code === 11000 ) {
+        throw new DuplicateConflictError('Указанный email давно отдыхает в базе данных, используйте другой email :)');
       }
       next(error);
     })
