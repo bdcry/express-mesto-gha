@@ -2,6 +2,7 @@ const Card = require('../models/card');
 
 const BadRequest = require('../utils/errors/BadRequest');
 const NotFound = require('../utils/errors/NotFound');
+const ForbiddenError = require('../utils/errors/ForbiddenError');
 
 const { CORRECT_CODE, CREATE_CODE } = require('../utils/codes');
 
@@ -28,7 +29,7 @@ module.exports.getCards = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        throw new NotFound('Карточки не созданы');
+        throw new NotFound('Карточка не существует');
       }
       next(error);
     })
@@ -37,18 +38,21 @@ module.exports.getCards = (req, res, next) => {
 
 module.exports.deleteCardsId = (req, res, next) => {
   const cardId = req.params.id;
-  Card.findByIdAndRemove(cardId)
-    .then((data) => {
-      if (!data) {
-        throw new NotFound(`Карточка с указанным id: ${cardId} не существует`);
+  const id = req.user._id;
+  Card.findById(cardId)
+    .then((card) => {
+      if (!card) {
+        throw new BadRequest(`Карточка с указанным id: ${cardId} не существует`);
       }
-      res.status(CORRECT_CODE).send(data);
-    })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        throw new BadRequest(`Карточка с id: ${cardId} не существует`);
+      if (card.owner.toString() !== id) {
+        throw new ForbiddenError('Недостаточно прав для удаления карточки');
+      } else {
+        Card.findByIdAndRemove(cardId)
+          .then((data) => {
+            res.status(CORRECT_CODE).send(data);
+          })
+          .catch(next);
       }
-      next(error);
     })
     .catch(next);
 };
