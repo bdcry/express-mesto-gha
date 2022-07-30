@@ -44,11 +44,11 @@ module.exports.getUsers = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        throw new NotFound('Пользователи не существуют');
+        next(new NotFound('Пользователи не существуют'));
+      } else {
+        next(error);
       }
-      next(error);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.getUsersId = (req, res, next) => {
