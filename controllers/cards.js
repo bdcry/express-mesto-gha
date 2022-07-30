@@ -27,12 +27,6 @@ module.exports.getCards = (req, res, next) => {
     .then((cards) => {
       res.status(CORRECT_CODE).send(cards);
     })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        throw new NotFound('Карточка не существует');
-      }
-      next(error);
-    })
     .catch(next);
 };
 
