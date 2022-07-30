@@ -47,11 +47,11 @@ module.exports.deleteCardsId = (req, res, next) => {
           })
           .catch((error) => {
             if (error.name === 'CastError') {
-              throw new BadRequest(`Карточка с id:${cardId} не найдена`);
+              next(new BadRequest(`Передан невалидный id:${cardId} карточки`));
+            } else {
+              next(error);
             }
-            next(error);
-          })
-          .catch(next);
+          });
       }
     })
     .catch(next);
