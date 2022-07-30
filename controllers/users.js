@@ -28,13 +28,13 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        throw new BadRequest('Данные не прошли валидацию на сервере');
+        next(new BadRequest('Данные не прошли валидацию на сервере'));
       } else if (error.code === 11000) {
-        throw new DuplicateConflictError('Указанный email давно отдыхает в базе данных, используйте другой email :)');
+        next(new DuplicateConflictError('Указанный email давно отдыхает в базе данных, используйте другой email :)'));
+      } else {
+        next(error);
       }
-      next(error);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.getUsers = (req, res, next) => {
