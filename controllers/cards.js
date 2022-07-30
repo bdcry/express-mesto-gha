@@ -27,6 +27,12 @@ module.exports.getCards = (req, res, next) => {
     .then((cards) => {
       res.status(CORRECT_CODE).send(cards);
     })
+    .catch((error) => {
+      if (error.name === 'CastError') {
+        throw new NotFound('Карточка не существует');
+      }
+      next(error);
+    })
     .catch(next);
 };
 
@@ -36,7 +42,7 @@ module.exports.deleteCardsId = (req, res, next) => {
   Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFound(`Карточка с указанным id:${cardId} не существует`);
+        throw new NotFound(`Карточка с указанным id: ${cardId} не существует`);
       }
       if (card.owner.toString() !== id) {
         throw new ForbiddenError('Недостаточно прав для удаления карточки');
@@ -47,13 +53,14 @@ module.exports.deleteCardsId = (req, res, next) => {
           })
           .catch((error) => {
             if (error.name === 'CastError') {
-              next(new BadRequest(`Невалидный id:${cardId} карточки`));
-            } else {
-              next(error);
+              throw new BadRequest(`Карточка с id:${cardId} не найдена`);
             }
-          });
+            next(error);
+          })
+          .catch(next);
       }
-    });
+    })
+    .catch(next);
 };
 
 module.exports.putLikesOnCards = (req, res, next) => {
@@ -67,11 +74,11 @@ module.exports.putLikesOnCards = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new BadRequest('Невалидный id карточки'));
-      } else {
-        next(error);
+        throw new BadRequest('Карточка не существует');
       }
-    });
+      next(error);
+    })
+    .catch(next);
 };
 
 module.exports.deleteLikesFromCards = (req, res, next) => {
@@ -85,9 +92,9 @@ module.exports.deleteLikesFromCards = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new BadRequest('Невалидный id карточки'));
-      } else {
-        next(error);
+        throw new BadRequest('Карточка не существует');
       }
-    });
+      next(error);
+    })
+    .catch(next);
 };
