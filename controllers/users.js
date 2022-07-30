@@ -125,7 +125,7 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.status(CORRECT_CODE).send({ token });
     })
-    .catch((error) => {
-      next(error);
+    .catch(() => {
+      next(new AuthorizationError('Неправильные почта или пароль'));
     });
 };
