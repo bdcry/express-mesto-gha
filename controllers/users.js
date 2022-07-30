@@ -44,7 +44,7 @@ module.exports.getUsers = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new NotFound('Пользователи не существуют'));
+        next(new NotFound('Передан некорректный id пользователя'));
       } else {
         next(error);
       }
@@ -76,12 +76,12 @@ module.exports.getCurrentUser = (req, res, next) => {
       res.status(CORRECT_CODE).send(user);
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        throw new AuthorizationError('Ошибка аутентификации');
+      if (error.name === 'CastError') {
+        next(new BadRequest('Неверно указан id пользователя'));
+      } else {
+        next(error);
       }
-      next(error);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.patchUserProfile = (req, res, next) => {
@@ -93,11 +93,11 @@ module.exports.patchUserProfile = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        throw new BadRequest('Данные не прошли валидацию на сервере');
+        next(new BadRequest('Данные не прошли валидацию на сервере'));
+      } else {
+        next(error);
       }
-      next(error);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.patchUserAvatar = (req, res, next) => {
@@ -109,11 +109,11 @@ module.exports.patchUserAvatar = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        throw new BadRequest('Данные не прошли валидацию на сервере');
+        next(new BadRequest('Данные не прошли валидацию на сервере'));
+      } else {
+        next(error);
       }
-      next(error);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.login = (req, res, next) => {
