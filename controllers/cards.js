@@ -68,11 +68,11 @@ module.exports.putLikesOnCards = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        throw new BadRequest('Карточка не существует');
+        next(new BadRequest(`Передан невалидный id:${cardId} карточки`));
+      } else {
+        next(error);
       }
-      next(error);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.deleteLikesFromCards = (req, res, next) => {
