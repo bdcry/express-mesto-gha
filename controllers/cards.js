@@ -36,7 +36,7 @@ module.exports.deleteCardsId = (req, res, next) => {
   Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFound(`Карточка с указанным id: ${cardId} не существует`);
+        next(new NotFound(`Карточка с указанным id: ${cardId} не существует`));
       }
       if (card.owner.toString() !== id) {
         next(new ForbiddenError('Недостаточно прав для удаления карточки'));
@@ -61,7 +61,7 @@ module.exports.putLikesOnCards = (req, res, next) => {
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((data) => {
       if (!data) {
-        throw new NotFound(`Карточка с указанным id: ${cardId} не существует`);
+        next(new NotFound(`Карточка с указанным id:${cardId} не существует`));
       }
       res.status(CORRECT_CODE).send(data);
     })
