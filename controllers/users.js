@@ -126,10 +126,6 @@ module.exports.login = (req, res, next) => {
       res.status(CORRECT_CODE).send({ token });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        throw new AuthorizationError('Ошибка аутентификации');
-      }
       next(error);
-    })
-    .catch(next);
+    });
 };
