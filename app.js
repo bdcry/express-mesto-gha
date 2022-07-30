@@ -45,7 +45,7 @@ app.post(
 
 app.use('/', auth, usersRouter);
 app.use('/', auth, cardsRouter);
-app.all('*', auth, errorRouter);
+app.all('*', errorRouter);
 
 app.use(errors()); // обработчик ошибок celebrate
 app.use((err, req, res, next) => {

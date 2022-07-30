@@ -15,11 +15,11 @@ module.exports.createCard = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        throw new BadRequest('Данные не прошли валидацию на сервере');
+        next(new BadRequest('Данные не прошли валидацию на сервере'));
+      } else {
+        next(error);
       }
-      next(error);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.getCards = (req, res, next) => {
