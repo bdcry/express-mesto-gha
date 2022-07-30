@@ -62,11 +62,11 @@ module.exports.getUsersId = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        throw new BadRequest('Неверно указан id пользователя');
+        next(new BadRequest('Неверно указан id пользователя'));
+      } else {
+        next(error);
       }
-      next(error);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
