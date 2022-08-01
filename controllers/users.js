@@ -42,13 +42,7 @@ module.exports.getUsers = (req, res, next) => {
     .then((data) => {
       res.status(CORRECT_CODE).send(data);
     })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        next(new NotFound('Передан некорректный id пользователя'));
-      } else {
-        next(error);
-      }
-    });
+    .catch(next);
 };
 
 module.exports.getUsersId = (req, res, next) => {
@@ -125,7 +119,5 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.status(CORRECT_CODE).send({ token });
     })
-    .catch(() => {
-      next(new AuthorizationError('Неправильные почта или пароль'));
-    });
+    .catch(next);
 };
