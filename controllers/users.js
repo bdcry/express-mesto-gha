@@ -106,7 +106,8 @@ module.exports.patchUserAvatar = (req, res, next) => {
       } else {
         next(error);
       }
-    });
+    })
+    .catch(next);
 };
 
 module.exports.login = (req, res, next) => {
